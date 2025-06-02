@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome, <%= user %>!</h2>
+
+    <form action="/secret" method="POST">
+      <input type="text" name="secret" placeholder="Enter a new secret" required />
+      <button type="submit">Submit</button>
+    </form>
+
+    <br />
+    <% if (secrets.length > 0) { %>
+      <ul>
+        <% secrets.forEach(secret => { %>
+          <li><%= secret.content %> <small>(<%= new Date(secret.created_at).toLocaleString() %>)</small></li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p>You haven't submitted any secrets yet.</p>
+    <% } %>
+    <br />
+    <a href="/logout">Logout</a>
+  </div>
+</body>
+</html>
