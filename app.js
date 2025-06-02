@@ -13,12 +13,12 @@ const app = express();
 const port = 3000;
 const saltRounds = 10;
 
-// View engine
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session setup
+
 app.use(session({
   secret: process.env.SESSION_SECRET || "secret",
   resave: false,
@@ -28,7 +28,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// PostgreSQL connection
+
 const db = new pg.Client({
   user: process.env.PG_USER || "postgres",
   host: process.env.PG_HOST || "localhost",
@@ -38,9 +38,9 @@ const db = new pg.Client({
 });
 db.connect();
 
-// Passport local strategy
+
 passport.use(new LocalStrategy(
-  { usernameField: "email" }, // important!
+  { usernameField: "email" },
   async (email, password, done) => {
     try {
       const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
@@ -60,6 +60,7 @@ passport.use(new LocalStrategy(
       }
     } catch (err) {
       console.error("Login error:", err);
+      res.render("login.ejs",err);
       return done(err);
     }
   }
@@ -78,13 +79,12 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Middleware to protect routes
+
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.redirect("/login");
 }
 
-// Routes
 app.get("/", (req, res) => res.redirect("/login"));
 
 app.get("/register", (req, res) => {
@@ -112,7 +112,8 @@ app.post("/login", (req, res, next) => {
     if (err) return next(err);
     if (!user) {
       console.log("Login failed:", info.message);
-      return res.redirect("/login");
+      return res.render("login", { err: info.message });
+      
     }
     req.logIn(user, (err) => {
       if (err) return next(err);

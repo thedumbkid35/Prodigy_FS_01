@@ -1,4 +1,3 @@
-/* General Reset */
 * {
   margin: 0;
   padding: 0;
@@ -72,4 +71,11 @@ a{
     text-align: center;
     font-weight: bold;
     color: black;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-align: center;
 }
